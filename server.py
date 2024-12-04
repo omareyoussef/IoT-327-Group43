@@ -1,5 +1,3 @@
-
- 
 import socket
 import ipaddress
 import threading
@@ -11,7 +9,6 @@ import random
 import sys
 maxPacketSize = 1024
 defaultPort = 27017 
-global running
 serverIP = input('Enter the Ip address of the server: \n')
 serverPort = input('Enter the socket for connection: \n')
 def GetFreePort(minPort: int = 1024, maxPort: int = 65535):
@@ -70,7 +67,8 @@ def sensor_data(IOT_data):
         # If that IOT device name is already in the dictionary IOTList...
         if (IOTName in IOTList.keys()):
             # We append the list of data for that particular devices.
-            IOTList[IOTName].append(data['payload'][Ammeter],data['payload'][MoistureMeter])
+            IOTList[IOTName].append(data['payload'][Ammeter])
+            IOTList[IOTName].append(data['payload'][MoistureMeter])
         # If that sensor name is not in the list...
         else:
             IOTList[IOTName] = [data['payload'][Ammeter],data['payload'][MoistureMeter]]
@@ -83,10 +81,17 @@ def calc_moisture(IOTList):
     avg = 0
     return avg
 
-running = True
-def ListenOnTCP(connectionSocket, clientAddress):
+def calc_electricity(IOTList):
+    avg = 0
+    return avg
 
-    running = True
+def calc_waterUsage(IOTList):
+    avg = 0
+    return avg
+
+running = True
+def ListenOnTCP(connectionSocket, clientAddress): 
+    global running
     print("Connection from:", clientAddress)
     try:
         # Loop to run.
@@ -113,6 +118,7 @@ def ListenOnTCP(connectionSocket, clientAddress):
                 if IOT_data:
                     # Invoke sensordata and sensor the IOT data
                     sensorData = sensor_data(IOT_data)
+                    print(sensorData)
                     # find moisture within 3hours
                     avg = calc_moisture(IOT_data)
                     # Send the average back to the client.

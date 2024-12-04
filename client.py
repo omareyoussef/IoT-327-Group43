@@ -26,7 +26,7 @@ while clientMessage != "exit":
     # Send the message to your server
     tcpSocket.send(bytearray(clientMessage,  encoding="utf-8"))
     
-    if clientMessage == "1":
+    if clientMessage == "Moisture":
         # Receive a reply from the server for the best highway to take
         serverResponse = tcpSocket.recv(maxPacketSize).decode()
         print(f"Average Moisutre selected.: {serverResponse}")
@@ -35,4 +35,4 @@ while clientMessage != "exit":
         echoResponse = tcpSocket.recv(maxPacketSize).decode()
         print(f"Server echoed: {echoResponse}")
     
-tcpSocket.close()
+tcpSocket.close() 
