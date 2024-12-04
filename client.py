@@ -1,43 +1,38 @@
 import socket
+import ipaddress
+import threading
+import time
+import contextlib
+import errno
 
-valid_queries = {
-    "Q1": "What is the average moisture inside my kitchen fridge in the past three hours?",
-    "Q2": "What is the average water consumption per cycle in my smart dishwasher?",
-    "Q3": "Which device consumed more electricity among my three IoT devices?"
-}
+maxPacketSize = 1024
+defaultPort = 27017 
+serverIP = '127.0.0.1' 
 
-def start_client():
-    host = input("Enter the server IP address: ")
-    port = int(input("Enter the port number of the server: "))
+tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
+try:
+    tcpPort = int(input("Please enter the TCP port of the host: \n"));
+except:
+    tcpPort = 0
+if tcpPort == 0:
+    tcpPort = defaultPort
+serverIP = input('Enter the Ip address of the server: \n')
+tcpSocket.connect((serverIP, tcpPort))
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        try:
-            s.connect((host, port))
-            print("Connected to the server.")
+clientMessage = ""
+while clientMessage != "exit":
+    clientMessage = input("Available Options : \n1. Moisture\n2.Water Consumption\n3.Electricity (Or type \"exit\" to exit):\n>");
 
-            while True:
-                print("\nAvailable queries:")
-                for key, query in valid_queries.items():
-                    print(f"{key}: {query}")
-
-                query = input("\nEnter your query (Q1, Q2, Q3) or type 'exit' to quit: ")
-                if query.lower() == "exit":
-                    print("Closing connection to the server.")
-                    break
-
-                if query not in valid_queries:
-                    print("Invalid query. Please try again.")
-                    continue
-
-                # Send the query to the server
-                s.sendall(query.encode())
-
-                # Receive the server's response
-                response = s.recv(1024).decode()
-                print(f"Server response: {response}")
-
-        except Exception as e:
-            print(f"Failed to connect or communicate with the server: {e}")
-
-if __name__ == '__main__':
-    start_client()
+    # Send the message to your server
+    tcpSocket.send(bytearray(clientMessage,  encoding="utf-8"))
+    
+    if clientMessage == "Moisture":
+        # Receive a reply from the server for the best highway to take
+        serverResponse = tcpSocket.recv(maxPacketSize).decode()
+        print(f"Average Moisutre selected.: {serverResponse}")
+    else:
+        # If the message is not a query, just echo back the server's response
+        echoResponse = tcpSocket.recv(maxPacketSize).decode()
+        print(f"Server echoed: {echoResponse}")
+    
+tcpSocket.close() 
