@@ -12,7 +12,7 @@ This project implements an IoT system that integrates sensor data, a MongoDB dat
 1. Clone the repository:
    ```bash
    git clone https://github.com/omareyoussef/IoT-327-Group43.git
-   cd IoT-End-To-End-System
+   cd IoT-327-Group43
    ```
 
 2. Install dependencies:
