@@ -78,16 +78,31 @@ def sensor_data(IOT_data):
 
 # Method that takes IOT list information and returns average moisture within 3hours
 def calc_moisture(IOTList):
-    avg = 0
-    return avg
+    total = 0
+    deviceName = ""
+    answer = ""
+    for key, values in IOTList.items(): 
+        if key != "Dishwasher":
+            moistureTotal = sum(float(values[i]) for i in range(1, len(values),2))
+            moistureTotal = (moistureTotal*2)/len(values)
+            answer = answer + (f"Average Moisture inside kitchen in {key} past three hours are: {moistureTotal}")
+    return answer
+  
 
 def calc_electricity(IOTList):
     avg = 0
     return avg
 
 def calc_waterUsage(IOTList):
-    avg = 0
-    return avg
+    total = 0
+    deviceName = ""
+    answer = ""
+    for key, values in IOTList.items(): 
+        if key == "Dishwasher":
+            moistureTotal = sum(float(values[i]) for i in range(1, len(values),2))
+            moistureTotal = (moistureTotal*2)/len(values)
+            answer = answer + (f"Average Water Usage for {key} past three hours are: {moistureTotal}")
+    return answer
 
 running = True
 def ListenOnTCP(connectionSocket, clientAddress): 
@@ -120,9 +135,22 @@ def ListenOnTCP(connectionSocket, clientAddress):
                     sensorData = sensor_data(IOT_data)
                     print(sensorData)
                     # find moisture within 3hours
-                    avg = calc_moisture(IOT_data)
+                    answer = calc_moisture(sensorData)
                     # Send the average back to the client.
-                    serverResponse = connectionSocket.send(bytearray(str(avg), encoding='utf-8'))
+                    serverResponse = connectionSocket.send(bytearray(str(answer), encoding='utf-8'))
+            elif clientMessage == "Water Consumption": 
+                # Invoke GetServerData to retrieve data within 3hours.
+                IOT_data = GetServerData()
+
+                # If it is retreived 
+                if IOT_data:
+                    # Invoke sensordata and sensor the IOT data
+                    sensorData = sensor_data(IOT_data)
+                    # find moisture within 3hours
+                    answer = calc_waterUsage(sensorData)
+                    # Send the average back to the client.
+                    serverResponse = connectionSocket.send(bytearray(str(answer), encoding='utf-8'))
+
     finally:
         connectionSocket.close() # Close the connection
         print(f"Connection with {clientAddress} closed")
