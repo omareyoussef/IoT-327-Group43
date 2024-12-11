@@ -90,8 +90,14 @@ def calc_moisture(IOTList):
   
 
 def calc_electricity(IOTList):
-    avg = 0
-    return avg
+    total = 0
+    deviceName = ""
+    answer = ""
+    for key, values in IOTList.items(): 
+        elecTotal = sum(float(values[i]) for i in range(0, len(values),2))
+        elecTotal = (elecTotal*2)/len(values)
+        answer = answer + (f"Average Moisture inside kitchen in {key} past three hours are: {elecTotal}")
+    return answer
 
 def calc_waterUsage(IOTList):
     total = 0
